@@ -1,4 +1,4 @@
-#include <iostream>
+
 #include <string>
 #include "player.h"
 using namespace std;
@@ -52,4 +52,9 @@ string Player::getName() {
 	cin >> name;
 
 	return name;
+}
+
+Player::Player(){
+	name = getName();
+	shipArray = createShipArray();
 }

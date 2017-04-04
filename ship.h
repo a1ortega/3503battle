@@ -12,14 +12,14 @@ class Ship
 public:
     //Variable that is used later in determining whether or not the ship is alive
     int health[5];
-    
+
     //A blank array that is initialized in order to allow the direction of the ship's placement to be chosen
     //the chunk array contains the positions of the coordinates that each ship is bound to at some point
     string chunk[5];
-    
+
     //Variable to be used in the for-loops of the position creation based upon the orientation
     int length = 0;
-    
+
   Ship(int shipNumber, string position, int l, string orientation)
   {
     //Sets the length and initial chunk variable (first position) equal to the respective parameters
