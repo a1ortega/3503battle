@@ -11,19 +11,19 @@
 
 #include <stdio.h>
 #include <iostream>
+#include "ship.h"
 
 using namespace std;
 
 class map {
-private:
-    const static int size = 10;     // Size won't ever change
-    
 public:
     map();
+    const static int size = 10;     // Size won't ever change
     char mapArray[size][size];
-    void printMap();
+    void printMap(map *player1ships, map *player1guesses);
     bool hitCheck(map *guessMap, int coordinate[]);
     bool guessCheck(int coordinate[]);
+    void placeShip(Ship *ship, map *shipMap, char counter);
 };
 
 // Constructor for map object
@@ -45,7 +45,7 @@ bool map::guessCheck(int coordinate[]) {
 }
 
 // Checks if ship was hit
-bool map::hitCheck(map *guessMap, int coordinate[2]){
+bool map::hitCheck(map *guessMap, int coordinate[2]) {
     if(mapArray[coordinate[0]][coordinate[1]] == '~'){
         guessMap->mapArray[coordinate[0]][coordinate[1]] = 'O';     // Update guess map
         return 0;
@@ -56,14 +56,36 @@ bool map::hitCheck(map *guessMap, int coordinate[2]){
 }
 
 // Print mapArray of map
-void map::printMap(){
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            cout << mapArray[i][j] << " " ;
+void printMap(map *player1ships, map *player1guesses) {
+    cout << "   ------P1 Ships-----  -----P1 Guess------" << endl;
+    cout << "   A B C D E F G H I J  A B C D E F G H I J" << endl;
+    
+    char row_count = '0';
+    for (int i = 0; i < player1guesses->size; i++) {
+        cout << row_count << "  ";
+        for (int j = 0; j < player1guesses->size; j++) {
+            cout << player1ships->mapArray[i][j] << " " ;
         }
-        cout << endl; //formats into square- new line after reaching 'gameSize'
+        cout << " ";
+        for(int j=0; j< player1guesses->size; j++){
+            cout << player1guesses->mapArray[i][j]<< " ";
+        }
+        cout << endl;
+        row_count++;
     }
-    cout << endl;
+}
+
+void placeShip(Ship *ship, map *shipMap, char counter) {
+    int coordinate[2];
+    for(int i=0; i<ship->length; i++) {
+        coordinate[1] = toupper(ship->chunk[i].at(0)) - 0x41;   // First argument must be a char A-J. Subtract
+                                                                // 0x41 to get int value for array indexing.
+                                                                // Refer to ASCII table.
+        coordinate[0] = ship->chunk[i].at(1) - 0x30;    // Second argument must be a char 1-10. Subtract
+                                                        // 0x31 to get int value for array indexing.
+                                                        // Refer to ASCII table.
+        shipMap->mapArray[coordinate[0]][coordinate[1]] = counter + 0x30;
+    }
 }
 
 
