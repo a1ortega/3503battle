@@ -1,0 +1,310 @@
+#define LIMIT 5
+
+#include <iostream>
+#include <string>
+#define SUB_SIZE 2
+#define CRUISER_SIZE 3
+#define DESTROYER_SIZE 4
+#define CARRIER_SIZE 5
+///////////////////////clear screen
+
+void clearScreen(){
+        std::cout << "\x1B[2J\x1B[H";
+        /*        for(int i =0; i!=100;i++){  
+                std::cout<<"\n";
+      
+        }
+*/
+}
+
+/////////////////////////////// load an empty hits board
+
+void initWaves(char board[]){
+    for(int i =0; i!=100; i++){
+        board[i]='~';
+    }
+}
+
+/////////////////////////////////// print any 10*10 board
+void printBoard(char board[]){
+        std::cout<<"     ";//five spaces to account for four spaces and number
+    for(int i =0; i!=10; i++){
+        std::cout<<i<<" ";
+    }
+    std::cout<<std::endl;//start on newline
+
+    for(int i =0; i!=10; i++){
+        std::cout<<i<<"    ";
+        for(int j =0; j!=10; j++){
+            std::cout<<board[i*10+j]<<" ";
+        }
+        std::cout<<std::endl;
+    }
+}
+
+////////////////////////////////// check if a given square is occupied, does not test whether square is in grid
+bool isOccupied(int x, int y, char board[]){
+    if(board[y*10+x]!='~'){ 
+            return true;
+    }else{
+            return false;
+    }
+}
+
+/////////////////////////// If a ship can be placed in grid without overlapping another ship, ship is placed. Does not test for grid overhangs
+bool insertShipHoriz(int x, int y, char board[], int size){
+    for(int i = 0; i!=size; i++){
+        if(isOccupied(x+i,y,board)){
+            return false;// on first occupied space return false and exit
+        }
+    }
+        
+    for(int i = 0; i!=size; i++){
+        board[y*10+x+i] = '+';
+    }
+    return true;
+}
+
+///////////////////////////////
+bool insertShipVert(int x, int y, char board[], int size){
+    for(int i = 0; i!=size; i++){
+        if(isOccupied(x,y+i,board)){
+            return false;// on first occupied space return false and exit
+        }
+    }
+        
+    for(int i = 0; i!=size; i++){
+        board[(y+i)*10+x] = '+';
+    }
+    return true;
+}
+
+//////////////////////////////Load ships requests and validates input; if it receives an invalid ship size it loads a sub
+void loadShip(char board[], int size){
+    int vH;
+    int x;
+    int y;
+    std::string shipType="";
+    switch(size){
+            case 2: shipType ="Submarine";
+            break;
+
+            case 3: shipType = "Cruiser";
+                    break;
+            
+            case 4: shipType = "Destroyer";
+                   break;
+            case 5: shipType = "Carrier";
+                  break;
+            default: shipType ="Submarine";  
+    }
+
+    std::cout<<"Now Loading "<<shipType<<", Size "<<size<<std::endl;
+    std::cout<<"Press 1 for Vertical, 2 for Horizontal"<<std::endl;
+    std::cin>>vH;
+    while(!(vH==1||vH==2)){
+        std::cout<<"Sorry, That Was not a Valid Choice, please try again"<<std::endl;
+        std::cin>>vH;
+    }
+    while(true){
+        if(vH==1){// ship is to be placed vertically
+            std::cout<<"Please enter an x Coordinant"<<std::endl;
+            std::cin>>x;
+            while( x<0 || 9<x ){
+                 std::cout<<"Sorry, that was not a Valid Choice"<<std::endl;
+                 std::cin>>x;
+            }
+            std::cout<<"Please enter a Y coordinant"<<std::endl;
+            std::cin>>y;
+            while( y<0 || 9<(y+size-1)){
+                 std::cout<<"Sorry, that was not a Valid Choice"<<std::endl;
+                 std::cin>>y;
+            }
+        
+        //A reasonable spot was found, try inser    
+        if(!insertShipVert(x,y,board,size)){
+            std::cout<<"There was overlap with another Ship pleas try again"<<std::endl;
+            printBoard(board);
+        }else{
+            break;
+        }
+
+        }else{//The ship is to be placed horizontally
+    
+            std::cout<<"Please enter an x Coordinant"<<std::endl;
+            std::cin>>x;
+            while( x<0 || 9<(x+size-1) ){
+                 std::cout<<"Sorry, that was not a Valid Choice"<<std::endl;
+                std::cin>>x;
+            }
+            std::cout<<"Please enter a Y coordinant"<<std::endl;
+            std::cin>>y;
+             while( y<0 || y>9){
+                 std::cout<<"Sorry, that was not a Valid Choice"<<std::endl;
+                std::cin>>y;
+            }
+
+            if(!insertShipHoriz(x,y,board, size)){
+                std::cout<<"There was Overlap with another ship, please try again"<<std::endl;
+                printBoard(board);
+            }else{
+                break;
+            }
+        }
+    }
+}
+
+///////////////
+bool isHit(int x, int y, char board[]){
+    if(board[y*10+x]=='~'){
+        return false;
+    }else if(board[y*10+x]=='X'){
+        std::cout<<"REHIT: NO DAMAGE"<<std::endl;
+        return false;
+    }else if(board[y*10+x]=='+'){
+            board[y*10+x]='X';
+            return true;
+    }
+}
+
+///////////////////Setup board
+void setUp(int playerNumber, char playerBoard[]){
+
+        std::cout<<"Now Loading player "<<playerNumber<<"'s BattleShips"<<std::endl;
+        loadShip(playerBoard,SUB_SIZE);
+        printBoard(playerBoard);
+        
+        std::cout<<"Now Loading player "<<playerNumber<<"'s BattleShips"<<std::endl;
+        loadShip(playerBoard,CRUISER_SIZE);
+        printBoard(playerBoard);
+        
+        std::cout<<"Now Loading player "<<playerNumber<<"'s BattleShips"<<std::endl;
+        loadShip(playerBoard,CRUISER_SIZE);
+        printBoard(playerBoard);
+        
+        std::cout<<"Now Loading player "<<playerNumber<<"'s BattleShips"<<std::endl;
+        loadShip(playerBoard,DESTROYER_SIZE);
+        printBoard(playerBoard);
+        
+        std::cout<<"Now Loading player "<<playerNumber<<"'s BattleShips"<<std::endl;
+        loadShip(playerBoard,CARRIER_SIZE);
+        printBoard(playerBoard);
+}
+
+
+//////////////////////takeGuess get guess an do al input. Total hits is an array that contains the number of hits on each side
+void getGuessCoordinants(int guess[], int playerNumber){
+
+            int xGuess;
+            int yGuess;
+                    std::cout<<"Player "<<playerNumber<<" Turn"<<std::endl;
+                    std::cout<<"Guess an X coordinant"<<std::endl;
+                    std::cin>>xGuess;
+                    while(xGuess<0||xGuess>9){
+                        std::cout << "Sorry, That was not a valid X coordinant. Please Try Again"<<std::endl;
+                        std::cin  >> xGuess;
+                    }
+                    std::cout<<"Guess a Y coordinant"<<std::endl;
+                    std::cin>>yGuess;
+                    while( yGuess <0 || yGuess > 9 ){
+                        std::cout << "Sorry, That was not a Valid coordinant. Please Try Again"<<std::endl;
+                        std::cin >> yGuess;
+                    }
+                    guess[0]=xGuess;
+                    guess[1]=yGuess;
+}
+
+
+///////////////////////////////
+//Get see if the guess hits the enemy ship, return true if so
+bool fire_check_if_hit(char myHitMiss[], char opposingShips[], int guess[]){
+
+                if(  isHit( guess[0] , guess[1] ,  opposingShips )      ){
+
+                    std::cout<<"ITS A HIT CAPTAIN!"<<std::endl;
+                    opposingShips[ 10 * guess[1] + guess[0] ] = 'o';
+                    myHitMiss[ 10 * guess[1] + guess[0] ]='$';
+                    
+                    return true;
+
+                }else{
+
+                        std::cout<<"Nothing there Captain."<<std::endl;
+                        //good place for snappy comment
+                        myHitMiss[ 10*guess[1] + guess[0] ]='X';
+        
+                        return false;
+
+                }   
+}
+//
+//
+
+int main()
+{       
+        int guess[2];
+        getGuessCoordinants(guess,1);
+        std::cout<<guess[0]<<guess[1];
+        char p1Ships[100];
+        char p1HitMiss[100];
+        char p2Ships[100];
+        char p2HitMiss[100];
+        
+        int totalHitsByPlayer[2];
+        totalHitsByPlayer[0] = 0;
+        totalHitsByPlayer[1] = 0;
+        
+        initWaves(p1Ships);
+        initWaves(p1HitMiss);
+        initWaves(p2Ships);
+        initWaves(p2HitMiss);
+         
+    ///////////////////// assuming 2 player mode
+        setUp(1,p1Ships);
+        clearScreen();
+
+        setUp(2, p2Ships);
+        clearScreen();
+
+        int turn = 0;
+        while( totalHitsByPlayer[0] < LIMIT && totalHitsByPlayer[1] < LIMIT ){
+            
+            if(turn%2==0){   
+                   //this is player 1.
+                   // Board gets printed
+                   // then input is taken
+                   // then Changes are made to boards 
+                    printBoard(p1HitMiss);
+                    printBoard(p1Ships);
+                    getGuessCoordinants(guess, 1);
+
+                    if( fire_check_if_hit( p1HitMiss, p2Ships,guess ) ){
+                        totalHitsByPlayer[0]=totalHitsByPlayer[0]+1;
+                    }
+                    
+                    clearScreen();
+
+            }else{
+                    //this else implies that it is now player 2's turn
+                    printBoard(p2HitMiss);
+                    printBoard(p2Ships);
+                    getGuessCoordinants(guess, 2);
+
+                    if( fire_check_if_hit( p2HitMiss, p1Ships, guess ) ){
+                        totalHitsByPlayer[1]=totalHitsByPlayer[1]+1;
+                    }
+
+                    clearScreen();
+
+            }   
+
+
+            if(turn==100){
+                    turn=1;
+            }else{
+                    turn++;
+            }
+
+
+        }
+}
