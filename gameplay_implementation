@@ -1,0 +1,19 @@
+For implementation of the hitchecker, the player interpretation of the method can be put together
+where getGuessX and getGuessY and used as a single guess method of a dual-alphanumeric coordinate
+from there there is a checker similar to:
+  if (position[0] is less than or greater than a certain range of values)
+    return false/print out that a new coordinate is required
+  if (position[1] is less than or greather than a ceratin range of values}
+    return false/print out that a new coordinate is required
+  else
+     return true and pass the value into the ship header's guess check method
+     
+this method will gauge whether or not the guess has been made before (through comparison of it through the playerguesses map)
+after this check is done, 
+if there were no errors, it will go through the hitCheck method and return a boolean variable depending on if it hit a ship
+    if a ship was hit
+        the ship class uses it's "shot" method to decrement the health of that ship by one and there is an * in place of the 
+          ship's number
+        
+    if a ship was not hit
+        there is an O or 0 in place of where the shot missed, 
