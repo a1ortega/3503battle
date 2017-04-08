@@ -3,15 +3,13 @@
 #include "player.h"
 using namespace std;
 
-Ship** Player::createShipArray() {
-	Ship** shipArray = new Ship*[5];
-	shipArray[0] = createShip(1, 5);
-	shipArray[1] = createShip(2, 4);
-	shipArray[2] = createShip(3, 3);
-	shipArray[3] = createShip(4, 3);
-	shipArray[4] = createShip(5, 2);
+void Player::createShipArray() {
 
-	return shipArray;
+	this->ship1 = createShip(1, 5);
+	this->ship2 = createShip(2, 4);
+	this->ship3 = createShip(3, 3);
+	this->ship4 = createShip(4, 3);
+	this->ship5 = createShip(5, 2);
 }
 
 Ship* Player::createShip(int shipNumber, int length) {
@@ -52,4 +50,8 @@ string Player::getName() {
 	cin >> name;
 
 	return name;
+}
+
+Player::Player() {
+
 }
