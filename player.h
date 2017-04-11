@@ -23,6 +23,8 @@ public:
 
 bool intersectionCheck(string position, string orientation, int length, map *map);
 bool boundaryCheck(string position, string orientation, int length);
+bool coordinateCheck(string position);
+
 
 Ship* Player::createShip(int shipNumber, int length, map* map) {
     cout << "What position do you want to put your " << length <<" length ship at? (enter a capital letter and a digit ex: D7): "<< endl;
@@ -166,6 +168,69 @@ bool intersectionCheck(string position, string orientation, int length, map *map
         coordinate[1]++;
     }
     return false;
+}
+
+//Method that returns true if a coordinate is no  longer valid, but false if the coordinate is a valid option
+bool coordinateCheck(string position) {
+    int coordinate[2];
+    char column, row;
+    
+    column = position.at(0);
+    row = position.at(1);
+    
+    coordinate[1] = toupper(column) - 0x41;
+    coordinate[0] = row - 0x30;
+    
+    if ((row > 9 || row < 0) || (column > 9 || column < 0)) {
+            return true;
+    }
+    else
+        return false;
+}
+
+//Method that checks whether or not the guess is on the map. If the guess is already on the map, it returns true
+bool guessMapCheck(string position, map* guesses) {
+    int coordinate[2];
+    char column, row;
+    
+    column = position.at(0);
+    row = position.at(1);
+    
+    coordinate[1] = toupper(column) - 0x41;
+    coordinate[0] = row - 0x30;
+    
+    for(int i = 0; i < guesses.length; i++) {
+        for(int j = 0; j < guesses[0].length; j++) {
+            if(guesses->mapArray[coordinate[0]][coordinate[1]] == coordinate[i][j]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//Method that checks to see if the coordinate missed a ship. If it collides with a ship, it returns false. Otherwise it misses and
+//returns true
+bool missedShipHitCheck(string position, map*ships) {
+    int coordinate[2];
+    char column, row;
+    
+    column = position.at(0);
+    row = position.at(1);
+    
+    coordinate[1] = toupper(column) - 0x41;
+    coordinate[0] = row - 0x30;
+    
+    for(int i = 0; i < ships.length; i++) {
+        for(int j = 0; j < ships[0].length; j++) {
+            if(ships->mapArray[coordinate[0]][coordinate[1]] == coordinate[i][j]) {
+                //Need to figure out a way to implement the ship-shot method here (if it is the best way to go about this)
+                
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 int Player::getGuessX() {
