@@ -169,7 +169,7 @@ bool intersectionCheck(string position, string orientation, int length, map *map
     }
     return false;
 }
-
+//Edit: the next three methods have not been tested with compilation, I edited it from github. Fixing any errors should be painless
 //Method that returns true if a coordinate is no  longer valid, but false if the coordinate is a valid option
 bool coordinateCheck(string position) {
     int coordinate[2];
